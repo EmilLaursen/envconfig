@@ -203,11 +203,13 @@ func Process(prefix string, spec interface{}) error {
 		req := info.Tags.Get("required")
 		if !ok && def == "" {
 			if isTrue(req) {
-				key := info.Key
-				if info.Alt != "" {
-					key = info.Alt
+				return &ParseError{
+					KeyName:   info.Key,
+					FieldName: info.Name,
+					TypeName:  info.Field.Type().String(),
+					Value:     value,
+					Err:       fmt.Errorf("required environment variable %s missing value", info.Key),
 				}
-				return fmt.Errorf("required key %s missing value", key)
 			}
 			continue
 		}
